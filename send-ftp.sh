@@ -10,11 +10,7 @@ RECEIVERS_CONF_DIR="receivers.conf.d"
 source $FTP_CONF_FILE
 source $CIFS_CONF_FILE
 
-# mount ftp filesystem
-mkdir -p /mnt/ftpfs/
-curlftpfs ftp://$FTP_USERNAME:$FTP_PASSWORD@$FTP_HOST/$FTP_DIR/ /mnt/ftpfs/
-	# FIXME may need additional options
-
+FILES_TO_SEND=""
 
 cd $RECEIVERS_CONF_DIR 
 for receiver_conf_file in $(ls) ; do
@@ -30,7 +26,7 @@ for receiver_conf_file in $(ls) ; do
 		-o username=$CIFS_USERNAME,password=$CIFS_PASSWORD,domain=$CIFS_DOMAIN
 		# FIXME may need additional options
 
-	# TODO rinex, rename, compress, zip and move (send)
+	# TODO rinex, rename, compress, zip and append them to $FILE_TO_SEND
 	# here	
 
 
@@ -40,6 +36,5 @@ for receiver_conf_file in $(ls) ; do
 done
 cd ..
 
-# umount ftp filesystem
-umount /mnt/ftpfs/
-rmdir /mnt/ftpfs/
+curl -T "$FILES_TO_SEND" -u $FTP_USERNAME:$FTP_PASSWORD $FTP_HOST/$FTP_DIR/
+
