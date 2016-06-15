@@ -20,7 +20,7 @@ for receiver_conf_file in $(ls) ; do
 	source $receiver_conf_file
 	
 	# mount receiver cifs directory
-	mkdir -p /mnt/$receiver_conf_file/
+	mkdir -p /mnt/$receiver_conf_file-cifs/
 
 	mount -t cifs $RECEIVER_DIR /mnt/$receiver_conf_file-cifs/ \
 		-o username=$CIFS_USERNAME,password=$CIFS_PASSWORD,domain=$CIFS_DOMAIN
