@@ -2,6 +2,7 @@
 
 function sleep_and_retry 
 {
+	echo "Gone to sleep $TIMOUT_ON_FAIL" | tee /dev/stderr
 	sleep $TIMEOUT_ON_FAIL
 	$0 &
 	exit
