@@ -53,8 +53,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	fi
 
 	mount -t cifs "$RECEIVER_CIFS_DIR" "$mount_point" \
-		-o username="$CIFS_USERNAME",password="$CIFS_PASSWORD",\
-		domain="$CIFS_DOMAIN"
+		-o "username="$CIFS_USERNAME",password="$CIFS_PASSWORD",\
+		domain="$CIFS_DOMAIN""
 		# FIXME may need additional options
 	
 	if [ $? -ne 0 ] ; then
