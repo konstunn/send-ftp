@@ -70,14 +70,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	midnight=`date +%s --utc --date 00:00:00`
 	seconds_of_day=$(($now - $midnight))
 
-	# round to nearest hour
-	remainder=`expr $seconds_of_day % 3600`
-	if [ $remainder -lt 1800 ] ; then
-		seconds_hrly_rounded=`expr $seconds_of_day - $seconds_of_day % 3600`
-	else 
-		seconds_hrly_rounded=`expr $seconds_of_day + \
-			3600 - $seconds_of_day % 3600`
-	fi
+	# round backwards
+	seconds_hrly_rounded=`expr $seconds_of_day - $seconds_of_day % 3600`
 
 	yyyy=`date +%Y`
 	mm=`date +%m`
