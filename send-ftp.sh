@@ -67,6 +67,8 @@ RECEIVERS_CONF_DIR="receivers.conf.d"
 ERR_LOG="send-ftp.err.log"
 OUT_LOG="send-ftp.out.log"
 
+LAST_TIME_OK_FILE=".last_time_ok"
+
 # duplicate STDOUT to $OUT_LOG file
 exec > >(tee -a $OUT_LOG)
 
@@ -113,69 +115,65 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		sleep_and_retry
 	fi
 
-	# define path of the file to process and send
-	
-	# compute seconds elapsed since UTC midnight 
-	now=`date +%s --utc --date now`
-	midnight=`date +%s --utc --date 00:00:00`
-	seconds_of_day=$(($now - $midnight))
+	# TODO implement separate such file for each receiver
+	# read last time succeeded file, if such file exists
+	if [ -r $LAST_TIME_OK_FILE ] ; then
+		LAST_TIME_OK=`cat $LAST_TIME_OK_FILE`
+	else
+		# else take previous hour
+		LAST_TIME_OK=`date +%s -u`
+		LAST_TIME_OK=`expr $LAST_TIME_OK - 3600 - $LAST_TIME_OK % 3600`
+	fi
 
-	# round backwards
-	seconds_hrly_rounded=`expr $seconds_of_day - $seconds_of_day % 3600`
+	file_unixtime=$(($LAST_TIME_OK + 3600))
 
-	yyyy=`date +%Y`
-	mm=`date +%m`
-	dd=`date +%d`
-	yy=`date +%y`
+	UNXTIME_HRLY_RND=`date +%s -u` 
+	UNXTIME_HRLY_RND=$(($UNXTIME_HRLY_RND - $UNXTIME_HRLY_RND % 3600))
 
-	# construct .jps file path
-	JPS_FILE_NAME=""$RECEIVER_PREFIX"_$yy$mm"$dd"_"$seconds_hrly_rounded".jps"
+	while [ $file_unixtime -lt $UNXTIME_HRLY_RND ] ; do
 
-	JPS_FILE_PATH="$mount_point/raw_hourly/$yyyy/$mm/$dd/$JPS_FILE_NAME"
+		JPS_FILE_PATH=`build_jps_file_path $mount_point $file_unixtime \
+			$RECEIVER_PREFIX`
 
-	# rinexize
-	jps2rin --rn --fd --lz --dt=30000 --AT="$ANTENNA_TYPE" \
-		--RT="$RECEIVER_TYPE" "$JPS_FILE_PATH" -o "$TMP_REPO_DIR"
+		jps2rin --rn --fd --lz --dt=30000 --AT="$ANTENNA_TYPE" \
+			--RT="$RECEIVER_TYPE" "$JPS_FILE_PATH" -o "$TMP_REPO_DIR"
 
-	if [ $? -ne 0 ] ; then sleep_and_retry ; fi
+		if [ $? -ne 0 ] ; then sleep_and_retry ; fi
 
-	hour_letter=({a..x})
-	hour=`expr seconds_hrly_rounded / 3600`
-	hour_letter=${hour_letter[$hour]}
-	doy=`date +%j`					
+		RNX_FILENAME_BASE=`build_rnx_filename_base $RECEIVER_PREFIX \
+			$file_unixtime`
 
-	FILE_NAME_BASE="$RECEIVER_PREFIX"$doy""$hour_letter"."$yy""
+		# compress .o file, get .d file
+		rnx2crx "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
 
-	# compress .o file, get .d file
-	rnx2crx "$TMP_REPO_DIR/"$FILE_NAME_BASE"o"
+		# remove .o file
+		rm "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
 
-	# remove .o file
-	rm "$TMP_REPO_DIR/"$FILE_NAME_BASE"o"
+		# compress files
+		gzip --suffix .Z "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"*"
 
-	# compress files
-	gzip -S.Z "$TMP_REPO_DIR/$FILE_NAME_BASE*"
+		cd "$TMP_REPO_DIR"
 
-	cd "$TMP_REPO_DIR"
+		# change suffixes
+		mv ""$RNX_FILENAME_BASE"N.Z" ""$RNX_FILENAME_BASE"n.Z"
+		mv ""$RNX_FILENAME_BASE"G.Z" ""$RNX_FILENAME_BASE"g.Z"
 
-	# change presuffixes
-	mv ""$FILE_NAME_BASE"N.Z" ""$FILE_NAME_BASE"n.Z"
-	mv ""$FILE_NAME_BASE"G.Z" ""$FILE_NAME_BASE"g.Z"
+		for file_to_send in $(ls) ; do
+			# send
+			curl --upload-file "$file_to_send" \
+				--user $FTP_USERNAME:"$FTP_PASSWORD" \
+				$FTP_HOST/"$FTP_DIR"/
 
-	for file_to_send in $(ls) ; do
-		# send
-		curl --upload-file "$file_to_send" \
-			--user $FTP_USERNAME:$FTP_PASSWORD \
-			$FTP_HOST/$FTP_DIR/
+			# check exit status. if failed, sleep and retry
+			if [ $? -ne 0 ] ; then
+				FAIL=1
+			else
+				rm "$file_to_send"
+				echo "file '$file_to_send' sent"
+			fi
+		done
 
-		# check exit status. if failed, sleep and retry
-		if [ $? -ne 0 ] ; then
-			echo "ERROR: curl failed to send '$file_to_send' \
-				with exit code $?" >&2
-			FAIL=1
-		else
-			rm file_to_send
-			echo "file '$file_to_send' sent"
-		fi
+		file_unixtime=$((file_unixtime + 3600))
 	done
 
 	cd ..
@@ -187,4 +185,6 @@ done
 
 if [ $FAIL -eq 1 ] ; then
 	sleep_and_retry
+else
+	echo $file_unixtime > "$LAST_TIME_OK_FILE"
 fi
