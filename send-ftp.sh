@@ -43,11 +43,20 @@ for receiver_conf_file in $(ls) ; do
 	mount_point="/mnt/$receiver_conf_file-cifs/"
 	mkdir -p "$mount_point"
 
+	if [ $? -ne 0 ] ; then
+		rmdir "$mount_point"
+		sleep_and_retry
+	fi
 
 	mount -t cifs "$RECEIVER_CIFS_DIR" "$mount_point" \
 		-o username="$CIFS_USERNAME",password="$CIFS_PASSWORD",\
 		domain="$CIFS_DOMAIN"
 		# FIXME may need additional options
+	
+	if [ $? -ne 0 ] ; then
+		rmdir "$mount_point"
+		sleep_and_retry
+	fi
 
 
 	# unmount receiver cifs directory
@@ -58,3 +67,6 @@ cd ..
 
 curl -T "$FILES_TO_SEND" -u $FTP_USERNAME:$FTP_PASSWORD $FTP_HOST/$FTP_DIR/
 
+if [ $FAIL -eq 1 ] ; then
+	sleep_and_retry
+fi
