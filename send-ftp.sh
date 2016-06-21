@@ -3,7 +3,7 @@
 function sleep_and_retry 
 {
 	# echo both to stdout and stderr
-	echo "Gone to sleep $TIMOUT_ON_FAIL" | tee /dev/stderr
+	echo "Gone to sleep $TIMOUT_ON_FAIL" >&2
 	sleep $TIMEOUT_ON_FAIL
 	$0 &
 	exit
@@ -89,7 +89,8 @@ source $CIFS_CONF_FILE
 
 export LC_TIME="en_US.UTF-8"
 
-echo "$(date --utc): $0 started" | tee /dev/stderr
+# echo both to stdout and stderr
+echo "$(date --utc): $0 started" >&2
 
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
