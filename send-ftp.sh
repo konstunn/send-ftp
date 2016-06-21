@@ -35,13 +35,12 @@ export LC_TIME="en_US.UTF-8"
 
 echo "$(date --utc): $0 started" | tee /dev/stderr
 
-cd $RECEIVERS_CONF_DIR 
-for receiver_conf_file in $(ls) ; do
+for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	# read receiver config
 	# XXX potential security hole
-	source $receiver_conf_file
-	
+	source "$RECEIVERS_CONF_DIR/$receiver_conf_file"
+
 	# mount receiver cifs directory
 	mount_point="/mnt/$receiver_conf_file-cifs/"
 	mkdir -p "$mount_point"
@@ -66,7 +65,6 @@ for receiver_conf_file in $(ls) ; do
 	umount $mount_point 
 	rmdir $mount_point 
 done
-cd ..
 
 curl -T "$FILES_TO_SEND" -u $FTP_USERNAME:$FTP_PASSWORD $FTP_HOST/$FTP_DIR/
 
