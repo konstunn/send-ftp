@@ -28,6 +28,10 @@ source $CIFS_CONF_FILE
 
 FILES_TO_SEND=""
 
+export LC_TIME="en_US.UTF-8"
+
+echo "$(date --utc): $0 started" | tee /dev/stderr
+
 cd $RECEIVERS_CONF_DIR 
 for receiver_conf_file in $(ls) ; do
 
