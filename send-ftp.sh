@@ -10,17 +10,15 @@ function sleep_and_retry
 }
 
 # $1 - time_t
-function time_t_to_seconds_of_day
+function unixtime_to_seconds_of_day
 {
-	yyyy=`date +%Y -u -d @$1`
-	mm=`date +%m -u -d @$1`
-	dd=`date +%d -u -d @$1`
-	yy=`date +%y -u -d @$1`
+	YYYY=`date +%Y -u -d @$1`
+	MM=`date +%m -u -d @$1`
+	DD=`date +%d -u -d @$1`
 
-	# compute seconds elapsed since UTC midnight that day
-	midnight=`date +%s --utc --date $yyyy-$mm-$dd`
-	seconds_of_day=$(($1 - $midnight))
-	echo $seconds_of_day
+	MIDNIGHT=`date +%s --utc --date $YYYY-$MM-$DD`
+	SECONDS_OF_DAY=$(($1 - $MIDNIGHT))
+	echo $SECONDS_OF_DAY
 }
 
 FTP_CONF_FILE="ftp.conf"
