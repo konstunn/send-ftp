@@ -21,6 +21,9 @@ exec > >(tee -a $OUT_LOG)
 # duplicate STDERR to $ERR_LOG file
 exec 2> >(tee -a $ERR_LOG)
 
+# read general config
+source "send-ftp.conf"
+
 # read ftp and cifs config
 # XXX potential security holes
 source $FTP_CONF_FILE
