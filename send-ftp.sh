@@ -101,6 +101,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	jps2rin --rn --fd --lz --dt=30000 --AT="$ANTENNA_TYPE" \
 		--RT="$RECEIVER_TYPE" "$JPS_FILE_PATH" -o "$TMP_REPO_DIR"
 
+	if [ $? -ne 0 ] ; then sleep_and_retry ; fi
+
 	hour_letter=({a..x})
 	hour=`expr seconds_hrly_rounded / 3600`
 	hour_letter=${hour_letter[$hour]}
