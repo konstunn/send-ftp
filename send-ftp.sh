@@ -21,6 +21,10 @@ exec > >(tee -a $OUT_LOG)
 # duplicate STDERR to $ERR_LOG file
 exec 2> >(tee -a $ERR_LOG)
 
+TMP_REPO_DIR=".tmp_repo/"
+
+mkdir -p $TMP_REPO_DIR 
+
 # read general config
 source "send-ftp.conf"
 
@@ -28,8 +32,6 @@ source "send-ftp.conf"
 # XXX potential security holes
 source $FTP_CONF_FILE
 source $CIFS_CONF_FILE
-
-FILES_TO_SEND=""
 
 export LC_TIME="en_US.UTF-8"
 
@@ -60,13 +62,81 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		sleep_and_retry
 	fi
 
+	# define path of the file to process and send
+	
+	# compute seconds elapsed since UTC midnight 
+	now=`date +%s --utc --date now`
+	midnight=`date +%s --utc --date 00:00:00`
+	seconds_of_day=$(($now - $midnight))
+
+	# round to nearest hour
+	remainder=`expr $seconds_of_day % 3600`
+	if [ $remainder -lt 1800 ] ; then
+		seconds_hrly_rounded=`expr $seconds_of_day - $seconds_of_day % 3600`
+	else 
+		seconds_hrly_rounded=`expr $seconds_of_day + \
+			3600 - $seconds_of_day % 3600`
+	fi
+
+	yyyy=`date +%Y`
+	mm=`date +%m`
+	dd=`date +%d`
+	yy=`date +%y`
+
+	# construct .jps file path
+	JPS_FILE_NAME=""$RECEIVER_PREFIX"_$yy$mm"$dd"_"$seconds_hrly_rounded".jps"
+
+	JPS_FILE_PATH="$mount_point/raw_hourly/$yyyy/$mm/$dd/$JPS_FILE_NAME"
+
+	# rinexize
+	jps2rin --rn --fd --lz --dt=30000 --AT="$ANTENNA_TYPE" \
+		--RT="$RECEIVER_TYPE" "$JPS_FILE_PATH" -o "$TMP_REPO_DIR"
+
+	hour_letter=({a..x})
+	hour=`expr seconds_hrly_rounded / 3600`
+	hour_letter=${hour_letter[$hour]}
+	doy=`date +%j`					
+
+	FILE_NAME_BASE="$RECEIVER_PREFIX"$doy""$hour_letter"."$yy""
+
+	# compress .o file, get .d file
+	rnx2crx "$TMP_REPO_DIR/"$FILE_NAME_BASE"o"
+
+	# remove .o file
+	rm "$TMP_REPO_DIR/"$FILE_NAME_BASE"o"
+
+	# compress files
+	gzip -S.Z "$TMP_REPO_DIR/$FILE_NAME_BASE*"
+
+	cd "$TMP_REPO_DIR"
+
+	# change presuffixes
+	mv ""$FILE_NAME_BASE"N.Z" ""$FILE_NAME_BASE"n.Z"
+	mv ""$FILE_NAME_BASE"G.Z" ""$FILE_NAME_BASE"g.Z"
+
+	for file_to_send in $(ls) ; do
+		# send
+		curl --upload-file "$file_to_send" \
+			--user $FTP_USERNAME:$FTP_PASSWORD \
+			$FTP_HOST/$FTP_DIR/
+
+		# check exit status. if failed, sleep and retry
+		if [ $? -ne 0 ] ; then
+			echo "ERROR: curl failed to send '$file_to_send' \
+				with exit code $?" >&2
+			FAIL=1
+		else
+			rm file_to_send
+			echo "file '$file_to_send' sent"
+		fi
+	done
+
+	cd ..
 
 	# unmount receiver cifs directory
 	umount $mount_point 
 	rmdir $mount_point 
 done
-
-curl -T "$FILES_TO_SEND" -u $FTP_USERNAME:$FTP_PASSWORD $FTP_HOST/$FTP_DIR/
 
 if [ $FAIL -eq 1 ] ; then
 	sleep_and_retry
