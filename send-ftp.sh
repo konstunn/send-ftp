@@ -44,7 +44,7 @@ for receiver_conf_file in $(ls) ; do
 	mkdir -p "$mount_point"
 
 
-	mount -t cifs "$RECEIVER_DIR" "$mount_point" \
+	mount -t cifs "$RECEIVER_CIFS_DIR" "$mount_point" \
 		-o username="$CIFS_USERNAME",password="$CIFS_PASSWORD",\
 		domain="$CIFS_DOMAIN"
 		# FIXME may need additional options
