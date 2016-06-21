@@ -38,6 +38,27 @@ function build_rnx_filename_base
 	echo $RNX_FILENAME_BASE
 }
 
+# $1 - mount_point, $2 - FILE_UNIXTIME_VAR, $3 - RECEIVER_PREFIX
+function build_jps_file_path 
+{
+	MOUNT_POINT="$1"
+	FILE_UNIXTIME_VAR="$2"
+	RECEIVER_PREFIX="$3"
+
+	YYYY=`date +%Y -u -d @$FILE_UNIXTIME_VAR`
+	MM=`date +%m -u -d @$FILE_UNIXTIME_VAR`
+	DD=`date +%d -u -d @$FILE_UNIXTIME_VAR`
+	YY=`date +%y -u -d @$FILE_UNIXTIME_VAR`
+
+	SECONDS_OF_DAY=`unixtime_to_seconds_of_day $FILE_UNIXTIME_VAR`
+
+	JPS_FILE_NAME=""$RECEIVER_PREFIX"_$YY$MM"$DD"_"$SECONDS_OF_DAY".jps"
+
+	JPS_FILE_PATH="$MOUNT_POINT/raw_hourly/$YYYY/$MM/$DD/$JPS_FILE_NAME"
+
+	echo $JPS_FILE_PATH
+}
+
 FTP_CONF_FILE="ftp.conf"
 CIFS_CONF_FILE="cifs.conf"
 
