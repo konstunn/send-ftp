@@ -1,5 +1,12 @@
 #!/bin/bash
 
+function sleep_and_retry 
+{
+	sleep $TIMEOUT_ON_FAIL
+	$0 &
+	exit
+}
+
 FTP_CONF_FILE="ftp.conf"
 CIFS_CONF_FILE="cifs.conf"
 
