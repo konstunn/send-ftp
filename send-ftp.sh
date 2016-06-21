@@ -21,6 +21,23 @@ function unixtime_to_seconds_of_day
 	echo $SECONDS_OF_DAY
 }
 
+# $1 - RECEIVER_PREFIX, $2 - file_unixtime
+function build_rnx_filename_base
+{
+	RECEIVER_PREFIX="$1"
+	FILE_UNIXTIME=$2
+
+	HOUR_LETTER=({a..x})
+	HOUR=`date +%H -u @$FILE_UNIXTIME`
+	HOUR_LETTER=${HOUR_LETTER[$HOUR]}
+
+	DOY=`date +%j -u -d @$FILE_UNIXTIME`					
+	YY=`date +%y -u -d @$FILE_UNIXTIME`
+
+	RNX_FILENAME_BASE="$RECEIVER_PREFIX"$DOY""$HOUR_LETTER"."$YY""
+	echo $RNX_FILENAME_BASE
+}
+
 FTP_CONF_FILE="ftp.conf"
 CIFS_CONF_FILE="cifs.conf"
 
