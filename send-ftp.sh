@@ -40,19 +40,19 @@ for receiver_conf_file in $(ls) ; do
 	source $receiver_conf_file
 	
 	# mount receiver cifs directory
-	mkdir -p /mnt/$receiver_conf_file-cifs/
+	mount_point="/mnt/$receiver_conf_file-cifs/"
+	mkdir -p "$mount_point"
 
-	mount -t cifs $RECEIVER_DIR /mnt/$receiver_conf_file-cifs/ \
-		-o username=$CIFS_USERNAME,password=$CIFS_PASSWORD,domain=$CIFS_DOMAIN
+
+	mount -t cifs "$RECEIVER_DIR" "$mount_point" \
+		-o username="$CIFS_USERNAME",password="$CIFS_PASSWORD",\
+		domain="$CIFS_DOMAIN"
 		# FIXME may need additional options
-
-	# TODO rinex, rename, compress, zip and append them to $FILE_TO_SEND
-	# here	
 
 
 	# unmount receiver cifs directory
-	umount /mnt/$receiver_conf_file/
-	rmdir /mnt/$receiver_conf_file/
+	umount $mount_point 
+	rmdir $mount_point 
 done
 cd ..
 
