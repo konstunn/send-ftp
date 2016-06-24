@@ -143,8 +143,11 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$RECEIVER_PREFIX`
 
-		jps2rin --rn --fd --lz --dt=30000 --AT="$ANTENNA_TYPE" \
-			--RT="$RECEIVER_TYPE" "$JPS_FILE_PATH" -o "$TMP_REPO_DIR"
+		jps2rin --rn --fd --lz --dt=30000 --AT="ANTENNA_TYPE" \
+			--RT="RECEIVER_TYPE" "$JPS_FILE_PATH" -o="$TMP_REPO_DIR"
+
+		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" "$TMP_REPO_DIR"/*
+		sed -i "s/RECEIVER_TYPE/$RECEIVER_TYPE/g" "$TMP_REPO_DIR"/*
 
 		if [ $? -ne 0 ] ; then sleep_and_retry ; fi
 
