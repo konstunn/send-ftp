@@ -175,10 +175,10 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			fi
 		done
 
+		cd ..
+
 		file2send_unixtime=$((file2send_unixtime + 3600))
 	done
-
-	cd ..
 
 	# unmount receiver cifs directory
 	umount $mount_point 
