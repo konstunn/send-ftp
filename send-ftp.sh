@@ -123,17 +123,18 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	else
 		# else take previous hour
 		LAST_TIME_OK=`date +%s -u`
-		LAST_TIME_OK=`expr $LAST_TIME_OK - 3600 - $LAST_TIME_OK % 3600`
+		LAST_TIME_OK=$(($LAST_TIME_OK - 3600 - $LAST_TIME_OK % 3600))
 	fi
 
-	file_unixtime=$(($LAST_TIME_OK + 3600))
+	file2send_unixtime=$(($LAST_TIME_OK + 3600))
 
-	UNXTIME_HRLY_RND=`date +%s -u` 
-	UNXTIME_HRLY_RND=$(($UNXTIME_HRLY_RND - $UNXTIME_HRLY_RND % 3600))
+	UNXTIME_HRLY_ROUNDED=`date +%s -u` 
+	UNXTIME_HRLY_ROUNDED=$(($UNXTIME_HRLY_ROUNDED - \
+		$UNXTIME_HRLY_ROUNDED % 3600))
 
-	while [ $file_unixtime -le $UNXTIME_HRLY_RND ] ; do
+	while [ $file2send_unixtime -le $UNXTIME_HRLY_ROUNDED ] ; do
 
-		JPS_FILE_PATH=`build_jps_file_path $mount_point $file_unixtime \
+		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$RECEIVER_PREFIX`
 
 		jps2rin --rn --fd --lz --dt=30000 --AT="$ANTENNA_TYPE" \
@@ -142,7 +143,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		if [ $? -ne 0 ] ; then sleep_and_retry ; fi
 
 		RNX_FILENAME_BASE=`build_rnx_filename_base $RECEIVER_PREFIX \
-			$file_unixtime`
+			$file2send_unixtime`
 
 		# compress .o file, get .d file
 		rnx2crx "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
@@ -160,7 +161,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		mv ""$RNX_FILENAME_BASE"G.Z" ""$RNX_FILENAME_BASE"g.Z"
 
 		for file_to_send in $(ls) ; do
-			# send
+
 			curl --upload-file "$file_to_send" \
 				--user $FTP_USERNAME:"$FTP_PASSWORD" \
 				$FTP_HOST/"$FTP_DIR"/
@@ -174,7 +175,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			fi
 		done
 
-		file_unixtime=$((file_unixtime + 3600))
+		file2send_unixtime=$((file2send_unixtime + 3600))
 	done
 
 	cd ..
@@ -187,5 +188,5 @@ done
 if [ $FAIL -eq 1 ] ; then
 	sleep_and_retry
 else
-	echo $file_unixtime > "$LAST_TIME_OK_FILE"
+	echo $file2send_unixtime > "$LAST_TIME_OK_FILE"
 fi
