@@ -131,7 +131,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	UNXTIME_HRLY_RND=`date +%s -u` 
 	UNXTIME_HRLY_RND=$(($UNXTIME_HRLY_RND - $UNXTIME_HRLY_RND % 3600))
 
-	while [ $file_unixtime -lt $UNXTIME_HRLY_RND ] ; do
+	while [ $file_unixtime -le $UNXTIME_HRLY_RND ] ; do
 
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file_unixtime \
 			$RECEIVER_PREFIX`
