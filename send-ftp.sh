@@ -90,7 +90,7 @@ source $CIFS_CONF_FILE
 export LC_TIME="en_US.UTF-8"
 
 # echo both to stdout and stderr
-echo "$(date --utc): $0 started" >&2
+echo -e "\n$(date --utc): $0 started" >&2
 
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
