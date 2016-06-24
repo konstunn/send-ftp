@@ -59,6 +59,10 @@ function build_jps_file_path
 	echo $JPS_FILE_PATH
 }
 
+SELF_PATH=`dirname $0`
+
+cd "$SELF_PATH"
+
 FTP_CONF_FILE="ftp.conf"
 CIFS_CONF_FILE="cifs.conf"
 
