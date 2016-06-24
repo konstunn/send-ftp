@@ -96,6 +96,8 @@ export LC_TIME="en_US.UTF-8"
 # echo both to stdout and stderr
 echo -e "\n$(date --utc): $0 started" >&2
 
+FAIL=0
+
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	# read receiver config
