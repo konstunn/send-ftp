@@ -51,6 +51,7 @@ function build_jps_file_path
 	YY=`date +%y -u -d @$FILE_UNIXTIME_VAR`
 
 	SECONDS_OF_DAY=`unixtime_to_seconds_of_day $FILE_UNIXTIME_VAR`
+	SECONDS_OF_DAY=`printf %05d $SECONDS_OF_DAY`
 
 	JPS_FILE_NAME=""$RECEIVER_PREFIX"_$YY$MM"$DD"_"$SECONDS_OF_DAY".jps"
 
