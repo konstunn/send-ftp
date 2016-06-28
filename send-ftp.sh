@@ -172,7 +172,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		for file_to_send in $(ls) ; do
 
-			curl --upload-file "$file_to_send" \
+			curl --silent --show-error --upload-file "$file_to_send" \
 				--user $FTP_USERNAME:"$FTP_PASSWORD" \
 				ftp://$FTP_HOST/"$FTP_DIR"/
 
