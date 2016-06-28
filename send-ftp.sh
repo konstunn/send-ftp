@@ -162,7 +162,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		rm "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
 
 		# compress files
-		gzip --suffix .Z "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"*"
+		gzip --suffix .Z "$TMP_REPO_DIR"/$RNX_FILENAME_BASE*
 
 		cd "$TMP_REPO_DIR"
 
