@@ -28,7 +28,7 @@ function build_rnx_filename_base
 	FILE_UNIXTIME=$2
 
 	HOUR_LETTER=({a..x})
-	HOUR=`date +%H -u -d @$FILE_UNIXTIME`
+	HOUR=`date +%k -u -d @$FILE_UNIXTIME`
 	HOUR_LETTER=${HOUR_LETTER[$HOUR]}
 
 	DOY=`date +%j -u -d @$FILE_UNIXTIME`					
