@@ -174,7 +174,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 			curl --upload-file "$file_to_send" \
 				--user $FTP_USERNAME:"$FTP_PASSWORD" \
-				$FTP_HOST/"$FTP_DIR"/
+				ftp://$FTP_HOST/"$FTP_DIR"/
 
 			# check exit status. if failed, sleep and retry
 			if [ $? -ne 0 ] ; then
