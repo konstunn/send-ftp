@@ -144,16 +144,43 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$RECEIVER_PREFIX`
 
+		JPS_DIRNAME=`dirname "$JPS_FILE_PATH"`
+		SRC_FILENAME=`ls "$JPS_DIRNAME" | tail -n 1`
+		SRC_PREFIX=`echo $SRC_FILENAME | awk -F'_' '{print $1}'`
+
+		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
+			$SRC_PREFIX`
+
 		jps2rin --rn --fd --lz --dt=30000 --AT="ANTENNA_TYPE" \
 			--RT="RECEIVER_TYPE" "$JPS_FILE_PATH" -o="$TMP_REPO_DIR"
 
-		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" "$TMP_REPO_DIR"/*
-		sed -i "s/RECEIVER_TYPE/$RECEIVER_TYPE/g" "$TMP_REPO_DIR"/*
-
-		if [ $? -ne 0 ] ; then sleep_and_retry ; fi
-
-		RNX_FILENAME_BASE=`build_rnx_filename_base $RECEIVER_PREFIX \
+		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
 			$file2send_unixtime`
+
+		RNX_FILENAME_BASE_DST_PREFIX=`build_rnx_filename_base $RECEIVER_PREFIX \
+			$file2send_unixtime`
+
+		cd "$TMP_REPO_DIR"		
+
+		mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"o "$RNX_FILENAME_BASE_DST_PREFIX"o
+		mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"N "$RNX_FILENAME_BASE_DST_PREFIX"N
+		mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"G "$RNX_FILENAME_BASE_DST_PREFIX"G
+
+		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" \
+			"$RNX_FILENAME_BASE_DST_PREFIX"*
+
+		sed -i "s/RECEIVER_TYPE/$RECEIVER_TYPE/g" \
+			"$RNX_FILENAME_BASE_DST_PREFIX"*
+
+		cd ..
+
+		if [ $? -ne 0 ] ; then 
+			umount $mount_point
+			rmdir $mount_point
+			sleep_and_retry
+		fi
+
+		RNX_FILENAME_BASE="$RNX_FILENAME_BASE_DST_PREFIX"
 
 		# compress .o file, get .d file
 		rnx2crx "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
