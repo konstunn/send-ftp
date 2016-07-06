@@ -80,7 +80,7 @@ exec > >(tee -a $OUT_LOG)
 # duplicate STDERR to $ERR_LOG file
 exec 2> >(tee -a $ERR_LOG)
 
-TMP_REPO_DIR=".tmp_repo/"
+TMP_REPO_DIR=".tmp_repo"
 
 mkdir -p $TMP_REPO_DIR 
 
@@ -106,7 +106,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	source "$RECEIVERS_CONF_DIR/$receiver_conf_file"
 
 	# mount receiver cifs directory
-	mount_point="/mnt/$receiver_conf_file-cifs/"
+	mount_point="/mnt/$receiver_conf_file-cifs"
 	mkdir -p "$mount_point"
 
 	if [ $? -ne 0 ] ; then
