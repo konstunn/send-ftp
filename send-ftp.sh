@@ -174,12 +174,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd ..
 
-		if [ $? -ne 0 ] ; then 
-			umount $mount_point
-			rmdir $mount_point
-			sleep_and_retry
-		fi
-
 		RNX_FILENAME_BASE="$RNX_FILENAME_BASE_DST_PREFIX"
 
 		# compress .o file, get .d file
