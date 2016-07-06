@@ -110,7 +110,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	mkdir -p "$mount_point"
 
 	if [ $? -ne 0 ] ; then
-		sleep_and_retry
+		continue
 	fi
 
 	mount -t cifs "$RECEIVER_CIFS_DIR" "$mount_point" \
@@ -120,7 +120,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	
 	if [ $? -ne 0 ] ; then
 		rmdir "$mount_point"
-		sleep_and_retry
+		continue
 	fi
 
 	# TODO implement separate such file for each receiver
