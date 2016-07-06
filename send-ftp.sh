@@ -1,5 +1,10 @@
 #!/bin/bash
 
+function round_down_unxtime_hrly
+{
+	echo $(($1 - $1 % 3600))
+}
+
 function sleep_and_retry 
 {
 	# echo both to stdout and stderr
@@ -131,15 +136,12 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		LAST_TIME_OK=`cat $LAST_TIME_OK_FILE`
 	else
 		# else take previous hour
-		LAST_TIME_OK=`date +%s -u`
-		LAST_TIME_OK=$(($LAST_TIME_OK - 3600 - $LAST_TIME_OK % 3600))
+		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d 'hour ago'))
 	fi
 
 	file2send_unixtime=$(($LAST_TIME_OK + 3600))
 
-	UNXTIME_HRLY_ROUNDED=`date +%s -u` 
-	UNXTIME_HRLY_ROUNDED=$(($UNXTIME_HRLY_ROUNDED - \
-		$UNXTIME_HRLY_ROUNDED % 3600))
+	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
 
 	while [ $file2send_unixtime -le $UNXTIME_HRLY_ROUNDED ] ; do
 
