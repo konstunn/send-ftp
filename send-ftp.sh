@@ -154,7 +154,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			$SRC_PREFIX`
 
 		jps2rin --rn --fd --lz --dt=30000 --AT="ANTENNA_TYPE" \
-			--RT="RECEIVER_TYPE" "$JPS_FILE_PATH" -o="$TMP_REPO_DIR"
+			--RT="RECEIVER_TYPE" "$JPS_FILE_PATH" -o="$TMP_REPO_DIR" > /dev/null
 
 		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
 			$file2send_unixtime`
