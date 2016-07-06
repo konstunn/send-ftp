@@ -225,5 +225,5 @@ done
 if [ $FAIL -eq 1 ] ; then
 	sleep_and_retry
 else
-	echo $file2send_unixtime > "$LAST_TIME_OK_FILE"
+	sleep 0
 fi
