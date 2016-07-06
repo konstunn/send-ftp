@@ -11,3 +11,4 @@
 - jps2rin
 - rnx2crx
 - gzip
+- ftp
