@@ -135,15 +135,15 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	if [ -r $LAST_TIME_OK_FILE ] ; then
 		LAST_TIME_OK=`cat $LAST_TIME_OK_FILE`
 	else
-		# else take previous hour
-		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d 'hour ago'))
+		# else take the hour before the last
+		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
 	fi
 
 	file2send_unixtime=$(($LAST_TIME_OK + 3600))
 
 	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
 
-	while [ $file2send_unixtime -le $UNXTIME_HRLY_ROUNDED ] ; do
+	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
 
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$RECEIVER_PREFIX`
