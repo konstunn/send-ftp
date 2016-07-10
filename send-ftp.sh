@@ -126,6 +126,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		# FIXME may need additional options
 	
 	if [ $? -ne 0 ] ; then
+		FAIL=1
 		rmdir "$mount_point"
 		continue
 	fi
