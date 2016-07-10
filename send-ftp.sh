@@ -43,6 +43,28 @@ function build_rnx_filename_base
 	echo $RNX_FILENAME_BASE
 }
 
+# $1 - RNX_FILENAME_BASE_SRC_PREFIX, $2 - RNX_FILENAME_BASE_DST_PREFIX
+function check_change_rnx_prefixes
+{
+	RNX_FILENAME_BASE_SRC_PREFIX="$1"
+
+	RNX_FILENAME_BASE_DST_PREFIX="$2"
+
+	if [ "$RNX_FILENAME_BASE_SRC_PREFIX" != \
+		"$RNX_FILENAME_BASE_DST_PREFIX" ] 
+	then
+		# change prefixes
+		mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"o \
+			"$RNX_FILENAME_BASE_DST_PREFIX"o
+
+		mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"N \
+			"$RNX_FILENAME_BASE_DST_PREFIX"N
+
+		mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"G \
+			"$RNX_FILENAME_BASE_DST_PREFIX"G
+	fi
+}
+
 # $1 - mount_point, $2 - FILE_UNIXTIME_VAR, $3 - RECEIVER_PREFIX
 function build_jps_file_path 
 {
@@ -176,19 +198,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd "$TMP_REPO_DIR"		
 
-		if [ "$RNX_FILENAME_BASE_SRC_PREFIX" != \
-			"$RNX_FILENAME_BASE_DST_PREFIX" ] 
-		then
-			# change prefixes
-			mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"o \
-				"$RNX_FILENAME_BASE_DST_PREFIX"o
-
-			mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"N \
-				"$RNX_FILENAME_BASE_DST_PREFIX"N
-
-			mv -f "$RNX_FILENAME_BASE_SRC_PREFIX"G \
-				"$RNX_FILENAME_BASE_DST_PREFIX"G
-		fi
+		check_change_rnx_prefixes $RNX_FILENAME_BASE_SRC_PREFIX \
+			$RNX_FILENAME_BASE_DST_PREFIX
 
 		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" \
 			"$RNX_FILENAME_BASE_DST_PREFIX"*
