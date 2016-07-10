@@ -117,6 +117,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	mkdir -p "$mount_point"
 
 	if [ $? -ne 0 ] ; then
+		FAIL=1
 		continue
 	fi
 
