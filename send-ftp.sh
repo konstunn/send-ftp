@@ -121,10 +121,10 @@ source $CIFS_CONF_FILE
 
 export LC_TIME="en_US.UTF-8"
 
-VERSION="git`git rev-parse --short HEAD`"
+VERSION="git-`git rev-parse --short HEAD`"
 
 # echo both to stdout and stderr
-echo -e "\n$(date --utc): $0-$VERSION started" >&2
+echo -e "\n$(date --utc): $0 ($VERSION) started" >&2
 
 FAIL=0
 
