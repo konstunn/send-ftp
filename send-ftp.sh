@@ -8,7 +8,7 @@ function round_down_unxtime_hrly
 function sleep_and_retry 
 {
 	# echo both to stdout and stderr
-	echo "Gone to sleep $TIMEOUT_ON_FAIL" >&2
+	echo "Gone to sleep $TIMEOUT_ON_FAIL"
 	sleep $TIMEOUT_ON_FAIL
 	$0 &
 	exit
@@ -96,16 +96,15 @@ CIFS_CONF_FILE="cifs.conf"
 
 RECEIVERS_CONF_DIR="receivers.conf.d"
 
-ERR_LOG="send-ftp.err.log"
-OUT_LOG="send-ftp.out.log"
+OUT_LOG="send-ftp.log"
 
 LAST_TIME_OK_FILE=".last_time_ok"
 
 # duplicate STDOUT to $OUT_LOG file
 exec > >(tee -a $OUT_LOG)
 
-# duplicate STDERR to $ERR_LOG file
-exec 2> >(tee -a $ERR_LOG)
+# duplicate STDERR to $OUT_LOG file
+exec 2> >(tee -a $OUT_LOG)
 
 TMP_REPO_DIR=".tmp_repo"
 
@@ -124,7 +123,7 @@ export LC_TIME="en_US.UTF-8"
 VERSION="git-`git rev-parse --short HEAD`"
 
 # echo both to stdout and stderr
-echo -e "\n$(date --utc): $0 ($VERSION) started" >&2
+echo -e "\n$(date --utc): $0 ($VERSION) started"
 
 FAIL=0
 
