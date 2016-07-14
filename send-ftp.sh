@@ -8,7 +8,7 @@ function round_down_unxtime_hrly
 function sleep_and_retry 
 {
 	# echo both to stdout and stderr
-	echo "Gone to sleep $TIMOUT_ON_FAIL" >&2
+	echo "Gone to sleep $TIMEOUT_ON_FAIL" >&2
 	sleep $TIMEOUT_ON_FAIL
 	$0 &
 	exit
