@@ -192,19 +192,19 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
 			$file2send_unixtime`
 
+		cd "$TMP_REPO_DIR"		
+
+		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" \
+			"$RNX_FILENAME_BASE_SRC_PREFIX"*
+
+		sed -i "s/RECEIVER_TYPE/$RECEIVER_TYPE/g" \
+			"$RNX_FILENAME_BASE_SRC_PREFIX"*
+
 		RNX_FILENAME_BASE_DST_PREFIX=`build_rnx_filename_base $RECEIVER_PREFIX \
 			$file2send_unixtime`
 
-		cd "$TMP_REPO_DIR"		
-
 		check_change_rnx_prefixes $RNX_FILENAME_BASE_SRC_PREFIX \
 			$RNX_FILENAME_BASE_DST_PREFIX
-
-		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" \
-			"$RNX_FILENAME_BASE_DST_PREFIX"*
-
-		sed -i "s/RECEIVER_TYPE/$RECEIVER_TYPE/g" \
-			"$RNX_FILENAME_BASE_DST_PREFIX"*
 
 		cd ..
 
