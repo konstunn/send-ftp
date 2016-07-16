@@ -98,8 +98,6 @@ RECEIVERS_CONF_DIR="receivers.conf.d"
 
 OUT_LOG="send-ftp.log"
 
-LAST_TIME_OK_FILE=".last_time_ok"
-
 # duplicate STDOUT to $OUT_LOG file
 exec > >(tee -a $OUT_LOG)
 
@@ -154,10 +152,12 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		continue
 	fi
 
+	last_time_ok_file="."$receiver_conf_file"_last_time_ok"
+
 	# TODO implement separate such file for each receiver
 	# read last time succeeded file, if such file exists
-	if [ -r $LAST_TIME_OK_FILE ] ; then
-		LAST_TIME_OK=`cat $LAST_TIME_OK_FILE`
+	if [ -r $last_time_ok_file ] ; then
+		LAST_TIME_OK=`cat $last_time_ok_file`
 	else
 		# else take the hour before the last
 		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
