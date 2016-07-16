@@ -1,3 +1,2 @@
-send-ftp.err.log
-send-ftp.out.log
+*.log
 receivers.conf.d/
