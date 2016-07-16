@@ -125,9 +125,10 @@ VERSION="git-`git rev-parse --short HEAD`"
 # echo both to stdout and stderr
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
-FAIL=0
 
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
+
+	FAIL=0
 
 	# read receiver config
 	# XXX potential security hole
