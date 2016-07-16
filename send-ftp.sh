@@ -378,6 +378,13 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd ..
 
+		if [ $RECEIVER_FAIL -eq 0 ] ; then
+			echo $file2send_unixtime > $last_time_ok_file
+		else 
+			# do processing sequentially
+			break # so break and process next receiver
+		fi
+
 		file2send_unixtime=$((file2send_unixtime + 3600))
 	done
 
