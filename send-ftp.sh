@@ -123,10 +123,11 @@ VERSION="git-`git rev-parse --short HEAD`"
 # echo both to stdout and stderr
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
+GLOBAL_FAIL=0
 
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
-	FAIL=0
+	RECEIVER_FAIL=0
 
 	# read receiver config
 	# XXX potential security hole
@@ -137,7 +138,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	mkdir -p "$mount_point"
 
 	if [ $? -ne 0 ] ; then
-		FAIL=1
+		RECEIVER_FAIL=1
+		GLOBAL_FAIL=1
 		continue
 	fi
 
@@ -147,7 +149,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		# FIXME may need additional options
 	
 	if [ $? -ne 0 ] ; then
-		FAIL=1
+		RECEIVER_FAIL=1
+		GLOBAL_FAIL=1
 		rmdir "$mount_point"
 		continue
 	fi
@@ -184,7 +187,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			-o="$TMP_REPO_DIR" > /dev/null
 
 		if [ $? -ne 0 ] ; then
-			FAIL=1
+			RECEIVER_FAIL=1
+			GLOBAL_FAIL=1
 			umount $mount_point
 			rmdir $mount_point
 			file2send_unixtime=$((file2send_unixtime + 3600))
@@ -236,7 +240,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 			# check exit status. if failed, sleep and retry
 			if [ $? -ne 0 ] ; then
-				FAIL=1
+				RECEIVER_FAIL=1
+				GLOBAL_FAIL=1
 			else
 				rm "$file_to_send"
 				echo "file '$file_to_send' sent"
@@ -253,8 +258,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	rmdir $mount_point 
 done
 
-if [ $FAIL -eq 1 ] ; then
+if [ $GLOBAL_FAIL -eq 1 ] ; then
 	sleep_and_retry
-else
-	sleep 0
 fi
