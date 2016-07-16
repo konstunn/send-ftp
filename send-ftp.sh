@@ -98,10 +98,8 @@ RECEIVERS_CONF_DIR="receivers.conf.d"
 
 OUT_LOG="send-ftp.log"
 
-# duplicate STDOUT to $OUT_LOG file
+# duplicate STDOUT and STDERR to $OUT_LOG file
 exec > >(tee -a $OUT_LOG)
-
-# duplicate STDERR to $OUT_LOG file
 exec 2> >(tee -a $OUT_LOG)
 
 TMP_REPO_DIR=".tmp_repo"
@@ -146,7 +144,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	mount -t cifs "$RECEIVER_CIFS_DIR" "$mount_point" \
 		-o "username="$CIFS_USERNAME"" -o "password="$CIFS_PASSWORD"" \
 		-o "domain="$CIFS_DOMAIN""
-		# FIXME may need additional options
 	
 	if [ $? -ne 0 ] ; then
 		RECEIVER_FAIL=1
@@ -157,7 +154,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	last_time_ok_file="."$receiver_conf_file"_last_time_ok"
 
-	# TODO implement separate such file for each receiver
 	# read last time succeeded file, if such file exists
 	if [ -r $last_time_ok_file ] ; then
 		LAST_TIME_OK=`cat $last_time_ok_file`
@@ -191,7 +187,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			GLOBAL_FAIL=1
 			umount $mount_point
 			rmdir $mount_point
-			file2send_unixtime=$((file2send_unixtime + 3600))
+			file2send_unixtime=$((file2send_unixtime + 3600)) # XXX
 			continue
 		fi
 
