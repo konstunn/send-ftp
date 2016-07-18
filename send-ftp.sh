@@ -226,7 +226,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		mv ""$RNX_FILENAME_BASE"N.Z" ""$RNX_FILENAME_BASE"n.Z"
 		mv ""$RNX_FILENAME_BASE"G.Z" ""$RNX_FILENAME_BASE"g.Z"
 
-		echo "FTP-server hostname: $FTP_HOST"
 		for file_to_send in $(ls) ; do
 
 			curl --silent --show-error --upload-file "$file_to_send" \
