@@ -186,8 +186,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			GLOBAL_FAIL=1
 			umount $mount_point
 			rmdir $mount_point
-			file2send_unixtime=$((file2send_unixtime + 3600)) # XXX
-			continue
+			break
 		fi
 
 		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
