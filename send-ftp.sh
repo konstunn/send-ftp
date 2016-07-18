@@ -136,7 +136,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	mkdir -p "$mount_point"
 
 	if [ $? -ne 0 ] ; then
-		RECEIVER_FAIL=1
 		GLOBAL_FAIL=1
 		continue
 	fi
@@ -146,7 +145,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		-o "domain="$CIFS_DOMAIN""
 	
 	if [ $? -ne 0 ] ; then
-		RECEIVER_FAIL=1
 		GLOBAL_FAIL=1
 		rmdir "$mount_point"
 		continue
@@ -183,7 +181,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			-o="$TMP_REPO_DIR" > /dev/null
 
 		if [ $? -ne 0 ] ; then
-			RECEIVER_FAIL=1
 			GLOBAL_FAIL=1
 			umount $mount_point
 			rmdir $mount_point
