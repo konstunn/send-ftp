@@ -122,6 +122,7 @@ echo -e "\n$(date --utc): $0 ($VERSION) started"
 
 GLOBAL_FAIL=0
 
+echo "FTP-server hostname: $FTP_HOST"
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	RECEIVER_FAIL=0
