@@ -5,12 +5,17 @@ function round_down_unxtime_hrly
 	echo $(($1 - $1 % 3600))
 }
 
+# $1 - attempts
 function sleep_and_retry 
 {
 	# echo both to stdout and stderr
-	echo "Gone to sleep $TIMEOUT_ON_FAIL"
-	sleep $TIMEOUT_ON_FAIL
-	exec $0
+	if [ $1 -eq 0 ] ; then
+		exit 0
+	else
+		echo "Gone to sleep $TIMEOUT_ON_FAIL"
+		sleep $TIMEOUT_ON_FAIL
+		exec $0 --attempts $(($1 - 1))
+	fi
 }
 
 # $1 - time_t
@@ -118,6 +123,31 @@ VERSION="git-`git rev-parse --short HEAD`"
 
 # echo both to stdout and stderr
 echo -e "\n$(date --utc): $0 ($VERSION) started"
+
+# TODO parse command line arguments: number of retries on fail
+LONG_OPTS="attempts"
+
+ARGS=`getopt --long $LONG_OPTS -n $(basename $0) -- "$@"`
+
+if [ $? -ne 0 ] ; then 
+	exit 1
+fi
+
+eval set -- "$ARGS"
+
+while true ; do
+	case "$1" in 
+		--attempts)
+			ATTEMPTS=$2 ; shift 2 ;;
+		--)				
+			shift ; break ;;
+	esac
+done
+
+if ! [[ $ATTEMPTS =~ ^[0-9]$ ]] ; then
+	echo Invalid argument value for option --attempts
+	exit 1
+fi
 
 GLOBAL_FAIL=0
 
@@ -252,5 +282,5 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 done
 
 if [ $GLOBAL_FAIL -eq 1 ] ; then
-	sleep_and_retry
+	sleep_and_retry $ATTEMPTS
 fi
