@@ -10,8 +10,7 @@ function sleep_and_retry
 	# echo both to stdout and stderr
 	echo "Gone to sleep $TIMEOUT_ON_FAIL"
 	sleep $TIMEOUT_ON_FAIL
-	$0 &
-	exit
+	exec $0
 }
 
 # $1 - time_t
