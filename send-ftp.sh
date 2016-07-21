@@ -144,7 +144,7 @@ while true ; do
 	esac
 done
 
-if ! [[ $ATTEMPTS =~ ^[0-9]$ ]] ; then
+if ! [[ $ATTEMPTS =~ ^[0-9]+$ ]] ; then
 	echo Invalid argument value for option --attempts
 	exit 1
 fi
@@ -214,8 +214,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		if [ $? -ne 0 ] ; then
 			GLOBAL_FAIL=1
-			umount $mount_point
-			rmdir $mount_point
 			break
 		fi
 
