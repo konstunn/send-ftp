@@ -176,7 +176,7 @@ VERSION="git-`git rev-parse --short HEAD`"
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
 # TODO parse command line arguments: number of retries on fail
-LONG_OPTS="attempts:,retry:"
+LONG_OPTS="attempts:,retry:,force"
 
 ARGS=`getopt --long $LONG_OPTS -n $(basename $0) -- "$@"`
 
@@ -190,6 +190,8 @@ while true ; do
 	case "$1" in 
 		--attempts | --retry)
 			ATTEMPTS=$2 ; shift 2 ;;
+		--force)
+			FORCE=1 ; shift ;;
 		--)				
 			shift ; break ;;
 	esac
@@ -255,9 +257,17 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	LAST_TIME_OK=`get_last_time_ok $last_time_ok_file`
 
-	file2send_unixtime=$(($LAST_TIME_OK + 3600))
-
 	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
+
+	if [ $(($UNXTIME_HRLY_ROUNDED - $LAST_TIME_OK)) -eq 3600 ] ; then
+		OK_WAS_LAST_HOUR=1
+	fi
+
+	if [ $OK_WAS_LAST_HOUR -eq 1 ] ; then 
+		if [ $FORCE -ne 1 ] ; then
+			file2send_unixtime=$(($LAST_TIME_OK + 3600))
+		fi
+	fi
 
 	if [ $file2send_unixtime -eq $UNXTIME_HRLY_ROUNDED ] ; then
 		echo "$receiver_conf_file ($RECEIVER_PREFIX): \
