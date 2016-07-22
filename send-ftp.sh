@@ -137,8 +137,10 @@ TMP_REPO_DIR=".tmp_repo"
 
 mkdir -p $TMP_REPO_DIR 
 
+GEN_CONF_FILE="send-ftp.conf"
+
 # read general config
-source "send-ftp.conf"
+source "$GEN_CONF_FILE"
 
 # read ftp and cifs config
 # XXX potential security holes
@@ -174,13 +176,13 @@ done
 
 if [[ $RETRY_NUM_ON_FAIL == "" ]] ; then
 	if [[ $ATTEMPTS == "" ]] ; then
-		echo "RETRY_NUM_ON_FAIL is not defined in 'send-ftp.conf'"
+		echo "RETRY_NUM_ON_FAIL is not defined in '$GEN_CONF_FILE'"
 		exit 1
 	fi
 else
 	check_uint $RETRY_NUM_ON_FAIL
 	if [ $? -eq 0 ] ; then
-		echo "Error: RETRY_NUM_ON_FAIL defined in 'send-ftp.conf' \
+		echo "Error: RETRY_NUM_ON_FAIL defined in '$GEN_CONF_FILE' \
 			is not an unsigned number"
 		exit 1
 	fi
