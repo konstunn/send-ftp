@@ -91,6 +91,13 @@ function build_jps_file_path
 	echo $JPS_FILE_PATH
 }
 
+# $1 - rnx filename base
+function change_rnx_suffixes
+{
+	mv ""$1"N.Z" ""$1"n.Z"
+	mv ""$1"G.Z" ""$1"g.Z"
+}
+
 SELF_PATH=`dirname $0`
 
 cd "$SELF_PATH"
@@ -249,9 +256,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd "$TMP_REPO_DIR"
 
-		# change suffixes
-		mv ""$RNX_FILENAME_BASE"N.Z" ""$RNX_FILENAME_BASE"n.Z"
-		mv ""$RNX_FILENAME_BASE"G.Z" ""$RNX_FILENAME_BASE"g.Z"
+		change_rnx_suffixes $RNX_FILENAME_BASE
 
 		for file_to_send in $(ls) ; do
 
