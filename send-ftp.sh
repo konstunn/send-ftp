@@ -98,6 +98,18 @@ function change_rnx_suffixes
 	mv ""$1"G.Z" ""$1"g.Z"
 }
 
+# $1 - rinex filename base source prefix,
+# $2 - antenna type
+# $3 - receiver type
+function edit_rnx_at_rt
+{
+	sed -i "s/ANTENNA_TYPE/$2/g" \
+		"$1"*
+
+	sed -i "s/RECEIVER_TYPE/$3/g" \
+		"$1"*
+}
+
 SELF_PATH=`dirname $0`
 
 cd "$SELF_PATH"
@@ -229,11 +241,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd "$TMP_REPO_DIR"		
 
-		sed -i "s/ANTENNA_TYPE/$ANTENNA_TYPE/g" \
-			"$RNX_FILENAME_BASE_SRC_PREFIX"*
-
-		sed -i "s/RECEIVER_TYPE/$RECEIVER_TYPE/g" \
-			"$RNX_FILENAME_BASE_SRC_PREFIX"*
+		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX $ANTENNA_TYPE \
+			$RECEIVER_TYPE
 
 		RNX_FILENAME_BASE_DST_PREFIX=`build_rnx_filename_base $RECEIVER_PREFIX \
 			$file2send_unixtime`
