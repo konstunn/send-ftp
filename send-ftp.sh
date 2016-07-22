@@ -213,6 +213,11 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
 
+	if [ $file2send_unixtime -eq $UNXTIME_HRLY_ROUNDED ] ; then
+		echo "$receiver_conf_file ($RECEIVER_PREFIX): \
+			last time ok was last hour - nothing to do"
+	fi
+
 	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
 
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
