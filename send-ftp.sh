@@ -153,7 +153,7 @@ VERSION="git-`git rev-parse --short HEAD`"
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
 # TODO parse command line arguments: number of retries on fail
-LONG_OPTS="attempts:"
+LONG_OPTS="attempts:,retry:"
 
 ARGS=`getopt --long $LONG_OPTS -n $(basename $0) -- "$@"`
 
@@ -165,7 +165,7 @@ eval set -- "$ARGS"
 
 while true ; do
 	case "$1" in 
-		--attempts)
+		--attempts | --retry)
 			ATTEMPTS=$2 ; shift 2 ;;
 		--)				
 			shift ; break ;;
