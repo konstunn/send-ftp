@@ -110,6 +110,15 @@ function edit_rnx_at_rt
 		"$1"*
 }
 
+function check_uint
+{
+	if ! [[ $1 =~ ^[0-9]+$ ]] ; then
+		return 0
+	else 
+		return 1
+	fi
+}
+
 SELF_PATH=`dirname $0`
 
 cd "$SELF_PATH"
@@ -163,8 +172,10 @@ while true ; do
 	esac
 done
 
-if ! [[ $ATTEMPTS =~ ^[0-9]+$ ]] ; then
-	echo Invalid argument value for option --attempts
+check_uint $ATTEMPTS
+
+if [ $? -eq 0 ] ; then
+	echo "Invalid argument value for option --attempts (--retry)"
 	exit 1
 fi
 
