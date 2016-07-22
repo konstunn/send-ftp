@@ -172,6 +172,24 @@ while true ; do
 	esac
 done
 
+if [[ $RETRY_NUM_ON_FAIL == "" ]] ; then
+	if [[ $ATTEMPTS == "" ]] ; then
+		echo "RETRY_NUM_ON_FAIL is not defined in 'send-ftp.conf'"
+		exit 1
+	fi
+else
+	check_uint $RETRY_NUM_ON_FAIL
+	if [ $? -eq 0 ] ; then
+		echo "Error: RETRY_NUM_ON_FAIL defined in 'send-ftp.conf' \
+			is not an unsigned number"
+		exit 1
+	fi
+fi
+
+if [[ $ATTEMPTS == "" ]] ; then
+	ATTEMPTS=$RETRY_NUM_ON_FAIL
+fi
+
 check_uint $ATTEMPTS
 
 if [ $? -eq 0 ] ; then
