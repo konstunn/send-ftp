@@ -127,6 +127,19 @@ function get_raw_file_prefix
 	echo $SRC_PREFIX
 }
 
+# $1 - last_time_ok_file
+function get_last_time_ok
+{
+	# read last time succeeded file, if such file exists
+	if [ -r $last_time_ok_file ] ; then
+		LAST_TIME_OK=`cat $last_time_ok_file`
+	else
+		# else take the hour before the last
+		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
+	fi
+	echo $LAST_TIME_OK
+}
+
 SELF_PATH=`dirname $0`
 
 cd "$SELF_PATH"
@@ -240,13 +253,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	last_time_ok_file="."$receiver_conf_file"_last_time_ok"
 
-	# read last time succeeded file, if such file exists
-	if [ -r $last_time_ok_file ] ; then
-		LAST_TIME_OK=`cat $last_time_ok_file`
-	else
-		# else take the hour before the last
-		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
-	fi
+	LAST_TIME_OK=`get_last_time_ok $last_time_ok_file`
 
 	file2send_unixtime=$(($LAST_TIME_OK + 3600))
 
