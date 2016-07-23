@@ -189,8 +189,8 @@ while true ; do
 	esac
 done
 
-if [[ $RETRY_NUM_ON_FAIL == "" ]] ; then
-	if [[ $ATTEMPTS == "" ]] ; then
+if [[ "$RETRY_NUM_ON_FAIL" == "" ]] ; then
+	if [[ "$ATTEMPTS" == "" ]] ; then
 		echo "RETRY_NUM_ON_FAIL is not defined in '$GEN_CONF_FILE'"
 		exit 1
 	fi
@@ -203,7 +203,7 @@ else
 	fi
 fi
 
-if [[ $ATTEMPTS == "" ]] ; then
+if [[ "$ATTEMPTS" == "" ]] ; then
 	ATTEMPTS=$RETRY_NUM_ON_FAIL
 fi
 
@@ -294,8 +294,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd "$TMP_REPO_DIR"		
 
-		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX $ANTENNA_TYPE \
-			$RECEIVER_TYPE
+		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX "$ANTENNA_TYPE" \
+			"$RECEIVER_TYPE"
 
 		RNX_FILENAME_BASE_DST_PREFIX=`build_rnx_filename_base $RECEIVER_PREFIX \
 			$file2send_unixtime`
