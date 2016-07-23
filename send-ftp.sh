@@ -228,7 +228,11 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	# mount receiver cifs directory
 	mount_point="/mnt/$receiver_conf_file-cifs"
-	mkdir -p "$mount_point"
+	if [ -d "$mount_point" ] ; then
+		umount "$mount_point"
+	else
+		mkdir "$mount_point"
+	fi
 
 	if [ $? -ne 0 ] ; then
 		GLOBAL_FAIL=1
