@@ -152,6 +152,8 @@ mkdir -p $TMP_REPO_DIR
 
 GEN_CONF_FILE="send-ftp.conf"
 
+FORCE=0
+
 # read general config
 source "$GEN_CONF_FILE"
 
@@ -255,9 +257,12 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
 
+	OK_WAS_LAST_HOUR=0
 	if [ $(($UNXTIME_HRLY_ROUNDED - $LAST_TIME_OK)) -eq 3600 ] ; then
 		OK_WAS_LAST_HOUR=1
 	fi
+
+	file2send_unixtime=$(($LAST_TIME_OK + 3600))
 
 	if [ $OK_WAS_LAST_HOUR -eq 1 ] ; then 
 		if [ $FORCE -eq 1 ] ; then
