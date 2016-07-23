@@ -178,7 +178,7 @@ echo -e "\n$(date --utc): $0 ($VERSION) started"
 # TODO parse command line arguments: number of retries on fail
 LONG_OPTS="attempts:,retry:,force"
 
-ARGS=`getopt --long $LONG_OPTS -n $(basename $0) -- "$@"`
+ARGS=`getopt -o "" --long $LONG_OPTS -n $(basename $0) -- "$@"`
 
 if [ $? -ne 0 ] ; then 
 	exit 1
