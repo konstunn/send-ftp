@@ -256,8 +256,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	fi
 
 	if [ $OK_WAS_LAST_HOUR -eq 1 ] ; then 
-		if [ $FORCE -ne 1 ] ; then
-			file2send_unixtime=$(($LAST_TIME_OK + 3600))
+		if [ $FORCE -eq 1 ] ; then
+			file2send_unixtime=$LAST_TIME_OK
 		fi
 	fi
 
