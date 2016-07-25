@@ -164,7 +164,12 @@ source $CIFS_CONF_FILE
 
 export LC_TIME="en_US.UTF-8"
 
+GITSTATLN=`git status --porcelain | wc -l`
 VERSION="git-`git rev-parse --short HEAD`"
+
+if [ $GITSTATLN -ne 0 ] ; then
+	VERSION=""$VERSION"+"
+fi
 
 # echo both to stdout and stderr
 echo -e "\n$(date --utc): $0 ($VERSION) started"
