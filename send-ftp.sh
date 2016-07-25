@@ -211,7 +211,6 @@ done
 
 if [[ "$RETRY_NUM_ON_FAIL" == "" ]] ; then
 	if [[ "$ATTEMPTS" == "" ]] ; then
-		echo "RETRY_NUM_ON_FAIL is not defined in '$GEN_CONF_FILE'"
 		ATTEMPTS=0
 	fi
 else
