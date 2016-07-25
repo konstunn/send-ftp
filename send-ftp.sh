@@ -135,6 +135,15 @@ function get_last_time_ok
 	echo $LAST_TIME_OK
 }
 
+# $1 - jps file path
+function get_src_prefix
+{
+	JPS_DIRNAME=`dirname "$1"`
+	SRC_FILENAME=`ls "$JPS_DIRNAME" | tail -n 1`
+	SRC_PREFIX=`echo $SRC_FILENAME | awk -F'_' '{print $1}'`
+	echo $SRC_PREFIX
+}
+
 SELF_PATH=`dirname $0`
 
 cd "$SELF_PATH"
@@ -299,9 +308,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$RECEIVER_PREFIX`
 
-		JPS_DIRNAME=`dirname "$JPS_FILE_PATH"`
-		SRC_FILENAME=`ls "$JPS_DIRNAME" | tail -n 1`
-		SRC_PREFIX=`echo $SRC_FILENAME | awk -F'_' '{print $1}'`
+		SRC_PREFIX=`get_src_prefix $JPS_FILE_PATH`
 
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$SRC_PREFIX`
