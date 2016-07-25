@@ -113,7 +113,7 @@ function edit_rnx_at_rt
 
 function check_uint
 {
-	if ! [[ $1 =~ ^[0-9]+$ ]] ; then
+	if ! [[ "$1" =~ ^[0-9]+$ ]] ; then
 		return 0
 	else 
 		return 1
