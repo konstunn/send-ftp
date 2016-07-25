@@ -10,9 +10,10 @@ function sleep_and_retry
 {
 	# echo both to stdout and stderr
 	if [ $1 -eq 0 ] ; then
+		echo "0 retry attempts remain. Exit"
 		exit 0
 	else
-		echo "Gone to sleep $TIMEOUT_ON_FAIL"
+		echo "Gone to sleep for $TIMEOUT_ON_FAIL"
 		sleep $TIMEOUT_ON_FAIL
 		exec $0 --attempts $(($1 - 1))
 	fi
@@ -127,7 +128,9 @@ function get_last_time_ok
 		LAST_TIME_OK=`cat $last_time_ok_file`
 	else
 		# else take the hour before the last
+		echo "Last time ok file not found"
 		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
+		echo "Assuming last time ok was 2 hours ago"
 	fi
 	echo $LAST_TIME_OK
 }
@@ -180,6 +183,7 @@ LONG_OPTS="attempts:,retry:,force"
 ARGS=`getopt -o "" --long $LONG_OPTS -n $(basename $0) -- "$@"`
 
 if [ $? -ne 0 ] ; then 
+	echo "Exit"
 	exit 1
 fi
 
@@ -206,6 +210,7 @@ else
 	if [ $? -eq 0 ] ; then
 		echo "Error: RETRY_NUM_ON_FAIL defined in '$GEN_CONF_FILE' \
 			is not an unsigned number"
+		echo "Exit"
 		exit 1
 	fi
 fi
@@ -218,6 +223,7 @@ check_uint $ATTEMPTS
 
 if [ $? -eq 0 ] ; then
 	echo "Invalid argument value for option --attempts (--retry)"
+	echo "Exit"
 	exit 1
 fi
 
@@ -232,6 +238,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	# read receiver config
 	# XXX potential security hole
 	source "$RECEIVERS_CONF_DIR/$receiver_conf_file"
+
+	echo "Processing '$receiver_conf_file' ('$RECEIVER_PREFIX')"
 
 	# mount receiver cifs directory
 	mount_point="/mnt/$receiver_conf_file-cifs"
@@ -272,13 +280,21 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	if [ $OK_WAS_LAST_HOUR -eq 1 ] ; then 
 		if [ $FORCE -eq 1 ] ; then
 			file2send_unixtime=$LAST_TIME_OK
+			echo "$receiver_conf_file ($RECEIVER_PREFIX): \
+				last time ok was last hour - force process"
 		else
 			echo "$receiver_conf_file ($RECEIVER_PREFIX): \
 				last time ok was last hour - nothing to do"
 		fi
+	else
+		# TODO customize date format
+		echo "$receiver_conf_file ($RECEIVER_PREFIX): \
+			last time ok was `date --utc -d @$LAST_TIME_OK`"
 	fi
 
 	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
+
+		echo "Processing date `date -u -d @$file2send_unixtime`"
 
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$RECEIVER_PREFIX`
