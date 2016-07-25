@@ -272,12 +272,10 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	if [ $OK_WAS_LAST_HOUR -eq 1 ] ; then 
 		if [ $FORCE -eq 1 ] ; then
 			file2send_unixtime=$LAST_TIME_OK
+		else
+			echo "$receiver_conf_file ($RECEIVER_PREFIX): \
+				last time ok was last hour - nothing to do"
 		fi
-	fi
-
-	if [ $file2send_unixtime -eq $UNXTIME_HRLY_ROUNDED ] ; then
-		echo "$receiver_conf_file ($RECEIVER_PREFIX): \
-			last time ok was last hour - nothing to do"
 	fi
 
 	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
