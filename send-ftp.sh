@@ -128,9 +128,9 @@ function get_last_time_ok
 		LAST_TIME_OK=`cat $last_time_ok_file`
 	else
 		# else take the hour before the last
-		echo "Last time ok file not found"
+		echo "Last time ok file not found:" >&2
 		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
-		echo "Assuming last time ok was 2 hours ago"
+		echo "Assuming last time ok was 2 hours ago" >&2
 	fi
 	echo $LAST_TIME_OK
 }
