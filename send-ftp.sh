@@ -214,10 +214,9 @@ else
 		echo "Exit"
 		exit 1
 	fi
-fi
-
-if [[ "$ATTEMPTS" == "" ]] ; then
-	ATTEMPTS=$RETRY_NUM_ON_FAIL
+	if [[ "$ATTEMPTS" == "" ]] ; then
+		ATTEMPTS=$RETRY_NUM_ON_FAIL
+	fi
 fi
 
 check_uint $ATTEMPTS
