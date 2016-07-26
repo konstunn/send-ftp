@@ -202,19 +202,17 @@ while true ; do
 	esac
 done
 
-if [[ "$RETRY_NUM_ON_FAIL" == "" ]] ; then
-	if [[ "$ATTEMPTS" == "" ]] ; then
-		ATTEMPTS=0
-	fi
-else
-	check_uint $RETRY_NUM_ON_FAIL
-	if [ $? -eq 0 ] ; then
-		echo "Error: RETRY_NUM_ON_FAIL defined in '$GEN_CONF_FILE' \
-			is not an unsigned number"
-		echo "Exit"
-		exit 1
-	fi
-	if [[ "$ATTEMPTS" == "" ]] ; then
+if [[ "$ATTEMPTS" == "" ]] ; then
+	if [[ "$RETRY_NUM_ON_FAIL" == "" ]] ; then
+			ATTEMPTS=0
+	else
+		check_uint $RETRY_NUM_ON_FAIL
+		if [ $? -eq 0 ] ; then
+			echo "Error: RETRY_NUM_ON_FAIL defined in '$GEN_CONF_FILE' \
+				is not an unsigned number"
+			echo "Exit"
+			exit 1
+		fi
 		ATTEMPTS=$RETRY_NUM_ON_FAIL
 	fi
 fi
