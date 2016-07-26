@@ -128,9 +128,9 @@ function get_last_sent
 		LAST_SENT=`cat $last_sent_file`
 	else
 		# else take the hour before the last
-		echo -n "Last time ok file not found: " >&2
+		echo -n ".*last_sent file not found: " >&2
 		LAST_SENT=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
-		echo "assuming last time ok was 2 hours ago" >&2
+		echo "assuming last sent 2 hours ago" >&2
 	fi
 	echo $LAST_SENT
 }
@@ -284,15 +284,15 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		if [ $FORCE -eq 1 ] ; then
 			file2send_unixtime=$LAST_SENT
 			echo "$receiver_conf_file ($RECEIVER_PREFIX):" \
-				"last time ok was last hour - force process"
+				"last sent last hour - force process"
 		else
 			echo "$receiver_conf_file ($RECEIVER_PREFIX):" \
-				"last time ok was last hour - nothing to do"
+				"last sent last hour - nothing to do"
 		fi
 	else
 		# TODO customize date format
 		echo "$receiver_conf_file ($RECEIVER_PREFIX):" \
-			"last time ok was `date --utc -d @$LAST_SENT`"
+			"last sent `date --utc -d @$LAST_SENT`"
 	fi
 
 	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
