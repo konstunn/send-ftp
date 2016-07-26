@@ -150,6 +150,7 @@ cd "$SELF_PATH"
 
 FTP_CONF_FILE="ftp.conf"
 CIFS_CONF_FILE="cifs.conf"
+GEN_CONF_FILE="send-ftp.conf"
 
 RECEIVERS_CONF_DIR="receivers.conf.d"
 
@@ -159,10 +160,7 @@ OUT_LOG="send-ftp.log"
 exec &> >(tee -a $OUT_LOG)
 
 TMP_REPO_DIR=".tmp_repo"
-
 mkdir -p $TMP_REPO_DIR 
-
-GEN_CONF_FILE="send-ftp.conf"
 
 FORCE=0
 
