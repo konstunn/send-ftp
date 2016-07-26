@@ -120,19 +120,19 @@ function check_uint
 	fi
 }
 
-# $1 - last_time_ok_file
-function get_last_time_ok
+# $1 - last_sent_file
+function get_last_sent
 {
 	# read last time succeeded file, if such file exists
-	if [ -r $last_time_ok_file ] ; then
-		LAST_TIME_OK=`cat $last_time_ok_file`
+	if [ -r $last_sent_file ] ; then
+		LAST_SENT=`cat $last_sent_file`
 	else
 		# else take the hour before the last
 		echo -n "Last time ok file not found: " >&2
-		LAST_TIME_OK=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
+		LAST_SENT=$(round_down_unxtime_hrly $(date +%s -u -d '2 hours ago'))
 		echo "assuming last time ok was 2 hours ago" >&2
 	fi
-	echo $LAST_TIME_OK
+	echo $LAST_SENT
 }
 
 # $1 - jps file path
@@ -267,22 +267,22 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		continue
 	fi
 
-	last_time_ok_file="."$receiver_conf_file"_last_time_ok"
+	last_sent_file="."$receiver_conf_file"_last_sent"
 
-	LAST_TIME_OK=`get_last_time_ok $last_time_ok_file`
+	LAST_SENT=`get_last_sent $last_sent_file`
 
 	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
 
-	OK_WAS_LAST_HOUR=0
-	if [ $(($UNXTIME_HRLY_ROUNDED - $LAST_TIME_OK)) -eq 3600 ] ; then
-		OK_WAS_LAST_HOUR=1
+	SENT_LAST_HOUR=0
+	if [ $(($UNXTIME_HRLY_ROUNDED - $LAST_SENT)) -eq 3600 ] ; then
+		SENT_LAST_HOUR=1
 	fi
 
-	file2send_unixtime=$(($LAST_TIME_OK + 3600))
+	file2send_unixtime=$(($LAST_SENT + 3600))
 
-	if [ $OK_WAS_LAST_HOUR -eq 1 ] ; then 
+	if [ $SENT_LAST_HOUR -eq 1 ] ; then
 		if [ $FORCE -eq 1 ] ; then
-			file2send_unixtime=$LAST_TIME_OK
+			file2send_unixtime=$LAST_SENT
 			echo "$receiver_conf_file ($RECEIVER_PREFIX):" \
 				"last time ok was last hour - force process"
 		else
@@ -292,7 +292,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	else
 		# TODO customize date format
 		echo "$receiver_conf_file ($RECEIVER_PREFIX):" \
-			"last time ok was `date --utc -d @$LAST_TIME_OK`"
+			"last time ok was `date --utc -d @$LAST_SENT`"
 	fi
 
 	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
@@ -368,7 +368,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		cd ..
 
 		if [ $RECEIVER_FAIL -eq 0 ] ; then
-			echo $file2send_unixtime > $last_time_ok_file
+			echo $file2send_unixtime > $last_sent_file
 		else 
 			# do processing sequentially
 			break # so break and process next receiver
