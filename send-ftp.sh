@@ -166,11 +166,7 @@ GEN_CONF_FILE="send-ftp.conf"
 
 FORCE=0
 
-# read general config
 source "$GEN_CONF_FILE"
-
-# read ftp and cifs config
-# XXX potential security holes
 source $FTP_CONF_FILE
 source $CIFS_CONF_FILE
 
@@ -183,10 +179,9 @@ if [ $GITSTATLN -ne 0 ] ; then
 	VERSION=""$VERSION"+"
 fi
 
-# echo both to stdout and stderr
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
-# TODO parse command line arguments: number of retries on fail
+# parse command line arguments
 LONG_OPTS="attempts:,retry:,force"
 
 ARGS=`getopt -o "" --long $LONG_OPTS -n $(basename $0) -- "$@"`
@@ -250,7 +245,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	RECEIVER_FAIL=0
 
 	# read receiver config
-	# XXX potential security hole
 	source "$RECEIVERS_CONF_DIR/$receiver_conf_file"
 
 	echo "Processing '$receiver_conf_file' ('$RECEIVER_PREFIX')"
@@ -366,7 +360,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 				--user $FTP_USERNAME:"$FTP_PASSWORD" \
 				ftp://$FTP_HOST/"$FTP_DIR"/
 
-			# check exit status. if failed, sleep and retry
+			# if fails, set fail flags
 			if [ $? -ne 0 ] ; then
 				RECEIVER_FAIL=1
 				GLOBAL_FAIL=1
