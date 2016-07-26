@@ -360,9 +360,9 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 				RECEIVER_FAIL=1
 				GLOBAL_FAIL=1
 			else
-				rm "$file_to_send"
 				echo "file '$file_to_send' sent"
 			fi
+			rm "$file_to_send"
 		done
 
 		cd ..
