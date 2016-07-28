@@ -239,7 +239,7 @@ if [[ "$RECEIVERS_CONF_FILES" == "" ]] ; then
 	echo "$RECEIVERS_CONF_DIR directory is empty"
 fi
 
-echo "FTP-server hostname: $FTP_HOST"
+echo "Destination FTP-server hostname: $FTP_HOST"
 
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
