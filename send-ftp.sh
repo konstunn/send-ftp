@@ -107,8 +107,14 @@ function edit_rnx_at_rt
 	sed -i "s/ANTENNA_TYPE/$2/g" \
 		"$1"*
 
+	if [ $? -ne 0 ] ; then 
+		return $?
+	fi
+
 	sed -i "s/RECEIVER_TYPE/$3/g" \
 		"$1"*
+
+	return $?
 }
 
 function check_uint
@@ -325,6 +331,11 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX "$ANTENNA_TYPE" \
 			"$RECEIVER_TYPE"
+
+		if [ $? -ne 0 ] then
+			GLOBAL_FAIL=1
+			break
+		fi
 
 		RNX_FILENAME_BASE_DST_PREFIX=`build_rnx_filename_base $RECEIVER_PREFIX \
 			$file2send_unixtime`
