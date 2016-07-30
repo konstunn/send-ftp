@@ -187,6 +187,9 @@ fi
 
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
+# show jps2rin version
+jps2rin | head -n 1
+
 # parse command line arguments
 LONG_OPTS="attempts:,retry:,force"
 
