@@ -333,6 +333,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		if [ $? -ne 0 ] ; then
 			GLOBAL_FAIL=1
+			RECEIVER_FAIL=1
+			cd ..
 			break
 		fi
 
