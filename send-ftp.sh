@@ -107,8 +107,10 @@ function edit_rnx_at_rt
 	sed -i "s/ANTENNA_TYPE/$2/g" \
 		"$1"*
 
-	if [ $? -ne 0 ] ; then 
-		return $?
+	EXITSTATUS=$?
+
+	if [ $EXITSTATUS -ne 0 ] ; then 
+		return $EXITSTATUS
 	fi
 
 	sed -i "s/RECEIVER_TYPE/$3/g" \
