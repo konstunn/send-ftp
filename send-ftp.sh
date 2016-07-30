@@ -256,11 +256,10 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		umount "$mount_point"
 	else
 		mkdir "$mount_point"
-	fi
-
-	if [ $? -ne 0 ] ; then
-		GLOBAL_FAIL=1
-		continue
+		if [ $? -ne 0 ] ; then
+			GLOBAL_FAIL=1
+			continue
+		fi
 	fi
 
 	mount -t cifs "$RECEIVER_CIFS_DIR" "$mount_point" \
