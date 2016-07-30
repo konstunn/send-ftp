@@ -346,6 +346,8 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
 			$file2send_unixtime`
 
+		mv $RNX_FILENAME_BASE_SRC_PREFIX* $TMP_REPO_DIR/.
+
 		cd "$TMP_REPO_DIR"		
 
 		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX "$ANTENNA_TYPE" \
