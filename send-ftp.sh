@@ -162,8 +162,10 @@ RECEIVERS_CONF_DIR="receivers.conf.d"
 
 OUT_LOG="send-ftp.log"
 
-# duplicate STDOUT and STDERR to $OUT_LOG file
-exec &> >(tee -a $OUT_LOG)
+if ! [ -t 1 ] ; then
+	# duplicate STDOUT and STDERR to $OUT_LOG file
+	exec &> >(tee -a $OUT_LOG)
+fi
 
 TMP_REPO_DIR=".tmp_repo"
 mkdir -p $TMP_REPO_DIR 
