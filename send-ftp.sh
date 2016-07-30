@@ -250,6 +250,12 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	RECEIVER_FAIL=0
 
+	# precaution
+	unset RECEIVER_CIFS_DIR
+	unset RECEIVER_PREFIX
+	unset ANTENNA_TYPE
+	unset RECEIVER_TYPE
+
 	# read receiver config
 	source "$RECEIVERS_CONF_DIR/$receiver_conf_file"
 
