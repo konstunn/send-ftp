@@ -162,8 +162,10 @@ RECEIVERS_CONF_DIR="receivers.conf.d"
 
 OUT_LOG="send-ftp.log"
 
-# duplicate STDOUT and STDERR to $OUT_LOG file
-exec &> >(tee -a $OUT_LOG)
+if ! [ -t 1 ] ; then
+	# duplicate STDOUT and STDERR to $OUT_LOG file
+	exec &> >(tee -a $OUT_LOG)
+fi
 
 TMP_REPO_DIR=".tmp_repo"
 mkdir -p $TMP_REPO_DIR 
@@ -184,6 +186,9 @@ if [ $GITSTATLN -ne 0 ] ; then
 fi
 
 echo -e "\n$(date --utc): $0 ($VERSION) started"
+
+# show jps2rin version
+jps2rin | head -n 1
 
 # parse command line arguments
 LONG_OPTS="attempts:,retry:,force"
@@ -244,6 +249,12 @@ echo "Destination FTP-server hostname: $FTP_HOST"
 for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	RECEIVER_FAIL=0
+
+	# precaution
+	unset RECEIVER_CIFS_DIR
+	unset RECEIVER_PREFIX
+	unset ANTENNA_TYPE
+	unset RECEIVER_TYPE
 
 	# read receiver config
 	source "$RECEIVERS_CONF_DIR/$receiver_conf_file"
