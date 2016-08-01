@@ -15,6 +15,11 @@ function sleep_and_retry
 	else
 		echo "Gone to sleep for $TIMEOUT_ON_FAIL"
 		sleep $TIMEOUT_ON_FAIL
+		if tty -s; then
+			exec &> /dev/tty
+		else
+			exec &> /dev/null
+		fi
 		exec $0 --attempts $(($1 - 1))
 	fi
 }
