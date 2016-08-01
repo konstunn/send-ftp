@@ -8,9 +8,10 @@ function round_down_unxtime_hrly
 # $1 - attempts
 function sleep_and_retry 
 {
+	echo "$1 retry attempts remain."
 	# echo both to stdout and stderr
 	if [ $1 -eq 0 ] ; then
-		echo "0 retry attempts remain. Exit"
+		echo Exit
 		exit 0
 	else
 		echo "Gone to sleep for $TIMEOUT_ON_FAIL"
