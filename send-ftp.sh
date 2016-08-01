@@ -195,6 +195,7 @@ fi
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
 # show jps2rin version
+echo -n "Installed "
 jps2rin | head -n 1
 
 # parse command line arguments
