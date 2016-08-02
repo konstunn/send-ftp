@@ -340,6 +340,12 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		JPS_FILE_PATH=`build_jps_file_path $mount_point $file2send_unixtime \
 			$SRC_PREFIX`
 
+		if ! [ -e "$JPS_FILE_PATH" ] ; then
+			# TODO: add record about this event to a database
+			echo "Error: $JPS_FILE_PATH not found. Skip."
+			continue
+		fi
+
 		echo -n "jps2rin: "
 
 		jps2rin --rn --fd --lz --dt=30000 --AT="ANTENNA_TYPE" \
