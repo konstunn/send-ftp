@@ -320,7 +320,15 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			"last sent `date --utc -d @$LAST_SENT`"
 	fi
 
-	while [ $file2send_unixtime -lt $UNXTIME_HRLY_ROUNDED ] ; do
+	file2send_unixtime=$(($file2send_unixtime - 3600))
+
+	while true ; do
+
+		file2send_unixtime=$(($file2send_unixtime + 3600))
+
+		if [ $file2send_unixtime -ge $UNXTIME_HRLY_ROUNDED ] ; then
+			break
+		fi
 
 		echo "Processing date `date -u -d @$file2send_unixtime`"
 
@@ -407,8 +415,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			# do processing sequentially
 			break # so break and process next receiver
 		fi
-
-		file2send_unixtime=$((file2send_unixtime + 3600))
 	done
 
 	# unmount receiver cifs directory
