@@ -163,7 +163,7 @@ function unxtime_in_hrs_before_now
 {
 	eval $1=$((${!1} + 3600))
 	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
-	test $1 -lt $UNXTIME_HRLY_ROUNDED
+	test ${!1} -lt $UNXTIME_HRLY_ROUNDED
 	return $?
 }
 
