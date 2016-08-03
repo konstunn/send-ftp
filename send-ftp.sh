@@ -342,7 +342,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		if ! [ -e "$JPS_FILE_PATH" ] ; then
 			# TODO: add record about this event to a database
-			echo "Error: $JPS_FILE_PATH not found. Skip."
+			echo "Error: $JPS_FILE_PATH not found. Skip to next hour."
 			continue
 		fi
 
