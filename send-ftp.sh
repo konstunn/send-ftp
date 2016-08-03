@@ -379,11 +379,16 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		RNX_FILENAME_BASE="$RNX_FILENAME_BASE_DST_PREFIX"
 
-		# compress .o file, get .d file
-		rnx2crx "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
+		if [ -e "$RNX_FILENAME_BASE"o ] ; then
+			# compress .o file, get .d file
+			rnx2crx "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
 
-		# remove .o file
-		rm "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
+			# remove .o file
+			rm "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
+		else
+			# TODO registrate that event in a database
+			echo "Error: no "$RNX_FILENAME_BASE"o file."
+		fi
 
 		# compress files
 		gzip --suffix .Z "$TMP_REPO_DIR"/$RNX_FILENAME_BASE*
