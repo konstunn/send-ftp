@@ -359,6 +359,13 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		cd "$TMP_REPO_DIR"		
 
+		FILES=`ls | grep $RNX_FILENAME_BASE_SRC_PREFIX | wc -l`
+		if [ $FILES -eq 0 ] ; then
+			# TODO registrate that event in a database
+			echo "Error: no rinex files. Skip to next hour."
+			continue
+		fi
+
 		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX "$ANTENNA_TYPE" \
 			"$RECEIVER_TYPE"
 
