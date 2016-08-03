@@ -369,13 +369,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		edit_rnx_at_rt $RNX_FILENAME_BASE_SRC_PREFIX "$ANTENNA_TYPE" \
 			"$RECEIVER_TYPE"
 
-		if [ $? -ne 0 ] ; then
-			GLOBAL_FAIL=1
-			RECEIVER_FAIL=1
-			cd ..
-			break
-		fi
-
 		RNX_FILENAME_BASE_DST_PREFIX=`build_rnx_filename_base $RECEIVER_PREFIX \
 			$file2send_unixtime`
 
