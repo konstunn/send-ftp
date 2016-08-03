@@ -158,6 +158,15 @@ function get_src_prefix
 	echo $SRC_PREFIX
 }
 
+# $1 - unxtime var name
+function unxtime_in_hrs_before_now
+{
+	eval $1=$((${!1} + 3600))
+	UNXTIME_HRLY_ROUNDED=$(round_down_unxtime_hrly $(date +%s -u))
+	test $1 -lt $UNXTIME_HRLY_ROUNDED
+	return $?
+}
+
 SELF_PATH=`dirname $0`
 
 cd "$SELF_PATH"
@@ -319,13 +328,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 	file2send_unixtime=$(($file2send_unixtime - 3600))
 
-	while true ; do
-
-		file2send_unixtime=$(($file2send_unixtime + 3600))
-
-		if [ $file2send_unixtime -ge $UNXTIME_HRLY_ROUNDED ] ; then
-			break
-		fi
+	while unxtime_in_hrs_before_now file2send_unixtime ; do
 
 		echo "Processing date `date -u -d @$file2send_unixtime`"
 
