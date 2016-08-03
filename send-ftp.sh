@@ -125,9 +125,9 @@ function edit_rnx_at_rt
 	return $?
 }
 
-function check_uint
+function is_unsigned_int
 {
-	if ! [[ "$1" =~ ^[0-9]+$ ]] ; then
+	if [[ "$1" =~ ^[0-9]+$ ]] ; then
 		return 0
 	else 
 		return 1
@@ -226,8 +226,7 @@ if [[ "$ATTEMPTS" == "" ]] ; then
 	if [[ "$RETRY_NUM_ON_FAIL" == "" ]] ; then
 			ATTEMPTS=0
 	else
-		check_uint $RETRY_NUM_ON_FAIL
-		if [ $? -eq 0 ] ; then
+		if ! is_unsigned_int $RETRY_NUM_ON_FAIL ; then
 			echo "Error: RETRY_NUM_ON_FAIL defined in '$GEN_CONF_FILE' \
 				is not an unsigned number"
 			echo "Exit"
@@ -237,9 +236,7 @@ if [[ "$ATTEMPTS" == "" ]] ; then
 	fi
 fi
 
-check_uint $ATTEMPTS
-
-if [ $? -eq 0 ] ; then
+if ! is_unsigned_int $ATTEMPTS ; then
 	echo "Invalid argument value for option --attempts (--retry)"
 	echo "Exit"
 	exit 1
