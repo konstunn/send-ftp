@@ -352,11 +352,6 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			--RT="RECEIVER_TYPE" "$JPS_FILE_PATH" \
 			-o="$TMP_REPO_DIR" > /dev/null
 
-		if [ $? -ne 0 ] ; then
-			GLOBAL_FAIL=1
-			break
-		fi
-
 		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
 			$file2send_unixtime`
 
