@@ -355,7 +355,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		RNX_FILENAME_BASE_SRC_PREFIX=`build_rnx_filename_base $SRC_PREFIX \
 			$file2send_unixtime`
 
-		mv $RNX_FILENAME_BASE_SRC_PREFIX* $TMP_REPO_DIR/.
+		mv $RNX_FILENAME_BASE_SRC_PREFIX* $TMP_REPO_DIR/. &> /dev/null
 
 		cd "$TMP_REPO_DIR"		
 
