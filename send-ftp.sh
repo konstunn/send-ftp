@@ -193,14 +193,14 @@ source "$GEN_CONF_FILE"
 source $FTP_CONF_FILE
 source $CIFS_CONF_FILE
 
-export LC_TIME="en_US.UTF-8"
-
 GITSTATLN=`git status --porcelain | wc -l`
 VERSION="git-`git rev-parse --short HEAD`"
 
 if [ $GITSTATLN -ne 0 ] ; then
 	VERSION=""$VERSION"+"
 fi
+
+export LC_TIME="en_US.UTF-8"
 
 echo -e "\n$(date --utc): $0 ($VERSION) started"
 
