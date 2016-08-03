@@ -382,7 +382,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		RNX_FILENAME_BASE="$RNX_FILENAME_BASE_DST_PREFIX"
 
-		if [ -e "$RNX_FILENAME_BASE"o ] ; then
+		if [ -e "$TMP_REPO_DIR"/"$RNX_FILENAME_BASE"o ] ; then
 			# compress .o file, get .d file
 			rnx2crx "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
 
