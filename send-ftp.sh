@@ -283,6 +283,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 	else
 		mkdir "$mount_point"
 		if [ $? -ne 0 ] ; then
+			# TODO registrate that event in a database
 			GLOBAL_FAIL=1
 			continue
 		fi
@@ -293,6 +294,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		-o "domain="$CIFS_DOMAIN""
 	
 	if [ $? -ne 0 ] ; then
+		# TODO registrate that event in a database
 		GLOBAL_FAIL=1
 		rmdir "$mount_point"
 		continue
@@ -326,6 +328,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			"last sent `date --utc -d @$LAST_SENT`"
 	fi
 
+	# this is because of unxtime_in_hrs_before_now features
 	file2send_unixtime=$(($file2send_unixtime - 3600))
 
 	while unxtime_in_hrs_before_now file2send_unixtime ; do
@@ -341,7 +344,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			$SRC_PREFIX`
 
 		if ! [ -e "$JPS_FILE_PATH" ] ; then
-			# TODO: add record about this event to a database
+			# TODO register that event in a database
 			echo "Error: $JPS_FILE_PATH not found. Skip to next hour."
 			continue
 		fi
@@ -361,7 +364,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 		FILES=`ls | grep $RNX_FILENAME_BASE_SRC_PREFIX | wc -l`
 		if [ $FILES -eq 0 ] ; then
-			# TODO registrate that event in a database
+			# TODO register that event in a database
 			echo "Error: no rinex files. Skip to next hour."
 			continue
 		fi
@@ -386,7 +389,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 			# remove .o file
 			rm "$TMP_REPO_DIR/"$RNX_FILENAME_BASE"o"
 		else
-			# TODO registrate that event in a database
+			# TODO register that event in a database
 			echo "Error: no "$RNX_FILENAME_BASE"o file."
 		fi
 
@@ -405,9 +408,11 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 
 			# if fails, set fail flags
 			if [ $? -ne 0 ] ; then
+				# TODO: register that event in a database
 				RECEIVER_FAIL=1
 				GLOBAL_FAIL=1
 			else
+				# TODO: register that event in a database
 				echo "file '$file_to_send' sent"
 			fi
 			rm "$file_to_send"
@@ -416,6 +421,7 @@ for receiver_conf_file in $(ls "$RECEIVERS_CONF_DIR") ; do
 		cd ..
 
 		if [ $RECEIVER_FAIL -eq 0 ] ; then
+			# TODO: register that event in a database
 			echo $file2send_unixtime > $last_sent_file
 		else 
 			# do processing sequentially
